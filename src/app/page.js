@@ -19,9 +19,9 @@ export default function Home() {
   };
 
   return (
-      <>
-        🎵 Spotify Taste Mixer
-      </>  
+    <>
+      🎵 Spotify Taste Mixer
+    </>
   );
 }
 
