@@ -1,3 +1,5 @@
+import { getAccessToken } from "./auth";
+
 export async function generatePlaylist(preferences) {
   const { artists, genres, decades, popularity } = preferences;
   const token = getAccessToken();
@@ -52,4 +54,48 @@ export async function generatePlaylist(preferences) {
   ).slice(0, 30);
 
   return uniqueTracks;
+}
+
+export async function searchArtists(query) {
+  const token = getAccessToken();
+  if (!token) return []; // Return empty if not logged in
+
+  // Call Spotify Search API
+  const response = await fetch(
+    `https://api.spotify.com/v1/search?type=artist&q=${encodeURIComponent(query)}&limit=5`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  );
+
+  if (!response.ok) {
+    console.error('Error searching artists');
+    return [];
+  }
+
+  const data = await response.json();
+  return data.artists.items; // Returns the list of artists found
+}
+
+export async function getGenres() {
+  const token = getAccessToken();
+  if (!token) return [];
+
+  try {
+    const response = await fetch(
+      'https://api.spotify.com/v1/recommendations/available-genre-seeds',
+      {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }
+    );
+
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data.genres || [];
+  } catch (error) {
+    console.error("Error obteniendo géneros:", error);
+    return [];
+  }
 }
