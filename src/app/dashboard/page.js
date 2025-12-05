@@ -4,150 +4,175 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/lib/auth';
 
-// -----------------------------------------------------------------------------
-// Component Imports
-// We assume the folder structure is: src/components/widgets/[WidgetName]/index.jsx
-// -----------------------------------------------------------------------------
+// Widgets
 import ArtistWidget from '@/components/widgets/ArtistWidget';
 import GenreWidget from '@/components/widgets/GenreWidget';
 import TrackWidget from '@/components/widgets/TrackWidget';
 import DecadeWidget from '@/components/widgets/DecadeWidget';
 import MoodWidget from '@/components/widgets/MoodWidget';
-// IMPORTE NUEVO AÑADIDO AQUI:
 import PopularityWidget from '@/components/widgets/PopularityWidget';
+
+// NEW: Results Component
+import PlaylistResults from '@/components/PlaylistResults';
 
 export default function Dashboard() {
     const router = useRouter();
 
+<<<<<<< Updated upstream
     // ---------------------------------------------------------------------------
     // Centralized Application State
     // This object holds all the user preferences selected across different widgets.
     // ---------------------------------------------------------------------------
+=======
+    // --- State Management ---
+    const [playlist, setPlaylist] = useState([]);
+    const [favorites, setFavorites] = useState([]);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [error, setError] = useState('');
+
+>>>>>>> Stashed changes
     const [prefs, setPrefs] = useState({
-        artists: [],      // Array of artist objects
-        genres: [],       // Array of genre strings
-        tracks: [],       // Array of track objects
-        decades: [],      // Array of strings (e.g., ['1980', '1990'])
-        popularity: [0, 100], // Range [min, max]
-        mood: {           // Object with audio features (0-100)
-            energy: 50,
-            valence: 50,
-            danceability: 50,
-            acousticness: 50
-        }
+        artists: [],
+        genres: [],
+        tracks: [],
+        decades: [],
+        popularity: [0, 100],
+        mood: { energy: 50, valence: 50, danceability: 50, acousticness: 50 }
     });
 
-    // ---------------------------------------------------------------------------
-    // Authentication Guard
-    // Redirects users to the login page if no valid token is found.
-    // ---------------------------------------------------------------------------
+    // --- Authentication ---
     useEffect(() => {
-        if (!isAuthenticated()) {
-            router.push('/');
-        }
+        if (!isAuthenticated()) router.push('/');
     }, [router]);
 
+<<<<<<< Updated upstream
     // ---------------------------------------------------------------------------
     // Render
     // ---------------------------------------------------------------------------
+=======
+    // --- Favorites Logic ---
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const stored = localStorage.getItem('favorite_tracks');
+        if (stored) {
+            try { setFavorites(JSON.parse(stored)); }
+            catch (err) { console.error(err); }
+        }
+    }, []);
+
+    const toggleFavorite = (track) => {
+        let updated;
+        if (favorites.some((fav) => fav.id === track.id)) {
+            updated = favorites.filter((fav) => fav.id !== track.id);
+        } else {
+            updated = [...favorites, track];
+        }
+        setFavorites(updated);
+        localStorage.setItem('favorite_tracks', JSON.stringify(updated));
+    };
+
+    // --- Playlist Logic ---
+    const removeTrack = (trackId) => {
+        setPlaylist((prev) => prev.filter((track) => track.id !== trackId));
+    };
+
+    const handleGenerate = async (options = { mode: 'replace' }) => {
+        setIsGenerating(true);
+        setError('');
+        try {
+            const tracks = await generatePlaylist(prefs);
+            if (options.mode === 'append') {
+                // Logic to merge unique tracks
+                const currentIds = new Set(playlist.map(t => t.id));
+                const newTracks = tracks.filter(t => !currentIds.has(t.id));
+                setPlaylist(prev => [...prev, ...newTracks]);
+            } else {
+                setPlaylist(tracks);
+            }
+        } catch (err) {
+            console.error(err);
+            setError('Failed to generate playlist.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    // --- Render ---
+>>>>>>> Stashed changes
     return (
         <main className="min-h-screen bg-black text-white p-4 md:p-8 flex flex-col items-center font-sans">
 
-            {/* Header Section */}
+            {/* Header */}
             <header className="w-full max-w-7xl mb-10 flex flex-col md:flex-row justify-between items-center border-b border-zinc-800 pb-6">
-                <div className="text-center md:text-left mb-4 md:mb-0">
-                    <h1 className="text-4xl font-extrabold bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-transparent tracking-tight">
+                <div className="text-center md:text-left">
+                    <h1 className="text-4xl font-extrabold bg-gradient-to-r from-green-500 to-blue-600 bg-clip-text text-transparent">
                         Spotify Taste Mixer
                     </h1>
                     <p className="text-zinc-400 text-sm mt-2 font-medium">
                         Curate your perfect playlist by mixing artists, genres, eras, and moods.
                     </p>
                 </div>
-
-                {/* Main Action Button (Placeholder for future logic) */}
+                {/* Main "Generate" CTA can live here too, or just inside the results */}
                 <button
+<<<<<<< Updated upstream
                     className="bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-gray-200 hover:scale-105 transition-all shadow-lg"
                     onClick={() => console.log("Generating playlist with:", prefs)}
                 >
                     Generate Playlist
+=======
+                    className="mt-4 md:mt-0 bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-gray-200 hover:scale-105 transition-all shadow-lg disabled:opacity-50"
+                    onClick={() => handleGenerate()}
+                    disabled={isGenerating}
+                >
+                    {isGenerating ? 'Processing...' : 'Generate Playlist'}
+>>>>>>> Stashed changes
                 </button>
             </header>
 
-            {/* Main Grid Layout 
-        Responsive behavior:
-        - Mobile: 1 column
-        - Tablet (md): 2 columns
-        - Large Desktop (xl): 3 columns
-      */}
+            {/* Widget Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full max-w-7xl">
-
-                {/* 1. Artists Selection */}
                 <div className="h-[450px]">
-                    <ArtistWidget
-                        selectedArtists={prefs.artists}
-                        onSelect={(newArtists) => setPrefs({ ...prefs, artists: newArtists })}
-                    />
+                    <ArtistWidget selectedArtists={prefs.artists} onSelect={(v) => setPrefs({ ...prefs, artists: v })} />
                 </div>
-
-                {/* 2. Genres Selection */}
                 <div className="h-[450px]">
-                    <GenreWidget
-                        selectedGenres={prefs.genres}
-                        onSelect={(newGenres) => setPrefs({ ...prefs, genres: newGenres })}
-                    />
+                    <GenreWidget selectedGenres={prefs.genres} onSelect={(v) => setPrefs({ ...prefs, genres: v })} />
                 </div>
-
-                {/* 3. Tracks Selection 
-            Note: We pass 'selectedDecades' here to enable filtering tracks by year 
-            within the widget itself.
-        */}
                 <div className="h-[450px]">
-                    <TrackWidget
-                        selectedTracks={prefs.tracks}
-                        onSelect={(newTracks) => setPrefs({ ...prefs, tracks: newTracks })}
-                        selectedDecades={prefs.decades}
-                    />
+                    <TrackWidget selectedTracks={prefs.tracks} onSelect={(v) => setPrefs({ ...prefs, tracks: v })} selectedDecades={prefs.decades} />
                 </div>
-
-                {/* 4. Decades Selection */}
                 <div className="h-[400px]">
-                    <DecadeWidget
-                        selectedDecades={prefs.decades}
-                        onSelect={(newDecades) => setPrefs({ ...prefs, decades: newDecades })}
-                    />
+                    <DecadeWidget selectedDecades={prefs.decades} onSelect={(v) => setPrefs({ ...prefs, decades: v })} />
                 </div>
-
-                {/* 5. Mood & Energy (New Widget) */}
                 <div className="h-[400px]">
-                    <MoodWidget
-                        mood={prefs.mood}
-                        onChange={(newMood) => setPrefs({ ...prefs, mood: newMood })}
-                    />
+                    <MoodWidget mood={prefs.mood} onChange={(v) => setPrefs({ ...prefs, mood: v })} />
                 </div>
-
-                {/* 6. Popularity Widget (YA NO ES PLACEHOLDER) */}
                 <div className="h-[400px]">
-                    <PopularityWidget
-                        popularity={prefs.popularity}
-                        onChange={(newRange) => setPrefs({ ...prefs, popularity: newRange })}
-                    />
+                    <PopularityWidget popularity={prefs.popularity} onChange={(v) => setPrefs({ ...prefs, popularity: v })} />
                 </div>
-
             </div>
 
+<<<<<<< Updated upstream
             {/* Debug Console / State Viewer
         This section helps visualize the state changes in real-time. 
         It mimics a code terminal style.
       */}
+=======
+            {/* NEW: Clean Playlist Results Component */}
+            <PlaylistResults
+                playlist={playlist}
+                favorites={favorites}
+                isGenerating={isGenerating}
+                error={error}
+                onGenerate={handleGenerate}
+                onToggleFavorite={toggleFavorite}
+                onRemove={removeTrack}
+            />
+
+            {/* Debugger */}
+>>>>>>> Stashed changes
             <div className="mt-12 w-full max-w-7xl bg-[#0d1117] p-6 rounded-xl border border-zinc-800 shadow-2xl overflow-hidden">
                 <div className="flex items-center gap-2 mb-4 border-b border-zinc-800 pb-3">
-                    {/* Mac-style window controls (CSS only, no emojis) */}
-                    <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-                    <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold ml-3 font-mono">
-                        Application State Debugger
-                    </p>
+                    <p className="text-zinc-500 text-xs uppercase tracking-widest font-bold font-mono">Debug State</p>
                 </div>
                 <pre className="text-green-400 font-mono text-xs overflow-auto max-h-60 whitespace-pre-wrap">
                     {JSON.stringify(prefs, null, 2)}
