@@ -13,6 +13,8 @@ import GenreWidget from '@/components/widgets/GenreWidget';
 import TrackWidget from '@/components/widgets/TrackWidget';
 import DecadeWidget from '@/components/widgets/DecadeWidget';
 import MoodWidget from '@/components/widgets/MoodWidget';
+// IMPORTE NUEVO AÑADIDO AQUI:
+import PopularityWidget from '@/components/widgets/PopularityWidget';
 
 export default function Dashboard() {
     const router = useRouter();
@@ -123,13 +125,12 @@ export default function Dashboard() {
                     />
                 </div>
 
-                {/* 6. Popularity Widget (Placeholder) */}
-                <div className="h-[400px] bg-zinc-900/50 p-6 rounded-xl border border-zinc-800 border-dashed flex flex-col items-center justify-center text-zinc-500 hover:bg-zinc-900/80 transition-colors cursor-not-allowed">
-                    <div className="w-12 h-12 rounded-full border-2 border-zinc-700 mb-4 flex items-center justify-center">
-                        <span className="text-xl font-bold">?</span>
-                    </div>
-                    <span className="font-medium">Popularity Widget</span>
-                    <span className="text-xs mt-1 text-zinc-600">Coming Soon</span>
+                {/* 6. Popularity Widget (YA NO ES PLACEHOLDER) */}
+                <div className="h-[400px]">
+                    <PopularityWidget
+                        popularity={prefs.popularity}
+                        onChange={(newRange) => setPrefs({ ...prefs, popularity: newRange })}
+                    />
                 </div>
 
             </div>
