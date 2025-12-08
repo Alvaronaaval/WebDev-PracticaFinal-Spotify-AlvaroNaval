@@ -45,7 +45,7 @@ export default function ArtistWidget({ selectedArtists, onSelect }) {
     return (
         <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4 text-white">
-                🎤 Select Artists ({selectedArtists.length}/5)
+                Select Artists ({selectedArtists.length}/5)
             </h2>
 
             {/* Search Input */}

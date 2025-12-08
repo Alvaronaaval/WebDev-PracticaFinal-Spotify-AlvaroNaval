@@ -13,6 +13,8 @@ import TrackWidget from '@/components/widgets/TrackWidget';
 import DecadeWidget from '@/components/widgets/DecadeWidget';
 import MoodWidget from '@/components/widgets/MoodWidget';
 import PopularityWidget from '@/components/widgets/PopularityWidget';
+// NUEVO: Importamos el widget de favoritos
+import FavoritesWidget from '@/components/widgets/FavoritesWidget';
 
 // --- Importación del Componente de Resultados ---
 // Hemos separado la lista de canciones en su propio archivo para mantener este limpio.
@@ -218,6 +220,14 @@ export default function Dashboard() {
                     <PopularityWidget
                         popularity={prefs.popularity}
                         onChange={(v) => setPrefs({ ...prefs, popularity: v })}
+                    />
+                </div>
+
+                {/* 7. FAVORITOS */}
+                <div className="h-[400px]">
+                    <FavoritesWidget
+                        favorites={favorites}
+                        onRemove={toggleFavorite} // Usamos la misma función toggle para eliminar
                     />
                 </div>
             </div>

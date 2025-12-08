@@ -250,7 +250,6 @@ Cada widget debe:
 **Descripción**: Seleccionar niveles de energía y características musicales
 
 **Parámetros**: Energy, Valence, Danceability, Acousticness
-
 **Funcionalidades**:
 - Sliders para energía (0-100)
 - Selección de mood (Happy, Sad, Energetic, Calm)

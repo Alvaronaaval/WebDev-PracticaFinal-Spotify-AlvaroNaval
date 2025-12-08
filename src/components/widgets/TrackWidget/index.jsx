@@ -41,7 +41,7 @@ export default function TrackWidget({ selectedTracks, onSelect }) {
     return (
         <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800 h-full flex flex-col">
             <h2 className="text-xl font-bold mb-4 text-white flex items-center gap-2">
-                🎵 Canciones ({selectedTracks.length}/5)
+                Canciones ({selectedTracks.length}/5)
             </h2>
 
             <input

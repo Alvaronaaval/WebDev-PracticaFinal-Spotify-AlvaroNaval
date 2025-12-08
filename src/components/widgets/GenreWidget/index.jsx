@@ -33,7 +33,7 @@ export default function GenreWidget({ selectedGenres, onSelect }) {
 
     return (
         <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800 h-full flex flex-col">
-            <h2 className="text-xl font-bold mb-4 text-white">🎸 Géneros ({selectedGenres.length}/5)</h2>
+            <h2 className="text-xl font-bold mb-4 text-white"> Géneros ({selectedGenres.length}/5)</h2>
 
             <input
                 className="w-full bg-zinc-800 text-white p-2 rounded mb-4 border border-zinc-700 focus:border-green-500 outline-none"
